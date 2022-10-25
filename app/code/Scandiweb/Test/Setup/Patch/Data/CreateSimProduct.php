@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Scandiweb\Test\Setup\Patch\Data;
 
 use Magento\Catalog\Api\CategoryLinkManagementInterface;
@@ -20,19 +22,67 @@ use Magento\InventoryApi\Api\SourceItemsSaveInterface;
 
 class CreateSimProduct implements DataPatchInterface
 {
-
+    /**
+     * @var State
+     */
     protected State $appState;
+
+    /**
+     * @var ProductInterfaceFactory
+     */
     protected ProductInterfaceFactory $productInterfaceFactory;
+
+    /**
+     * @var ProductRepositoryInterface
+     */
     protected ProductRepositoryInterface $productRepository;
+
+    /**
+     * @var EavSetup
+     */
     protected EavSetup $eavSetup;
+
+    /**
+     * @var StoreManagerInterface
+     */
     protected StoreManagerInterface $storeManager;
+
+    /**
+     * @var CategoryLinkManagementInterface
+     */
     protected CategoryLinkManagementInterface $categoryLink;
+
+    /**
+     * @var CollectionFactory
+     */
     protected CollectionFactory $categoryCollectionFactory;
+
+    /**
+     * @var SourceItemInterfaceFactory
+     */
     protected SourceItemInterfaceFactory $sourceItemFactory;
+
+    /**
+     * @var SourceItemsSaveInterface
+     */
     protected SourceItemsSaveInterface $sourceItemsSaveInterface;
 
+    /**
+     * @var array
+     */
     protected array $sourceItems = [];
 
+    /**
+     * @param CollectionFactory $categoryCollectionFactory
+     * @param ProductInterfaceFactory $productInterfaceFactory
+     * @param ProductRepositoryInterface $productRepository
+     * @param State $appState
+     * @param StoreManagerInterface $storeManager
+     * @param EavSetup $eavSetup
+     * @param CategoryLinkManagementInterface $categoryLink
+     * @param SourceItemInterfaceFactory $sourceItemFactory
+     * @param SourceItemsSaveInterface $sourceItemsSaveInterface
+     */
     public function __construct(
         CollectionFactory $categoryCollectionFactory,
         ProductInterfaceFactory $productInterfaceFactory,
@@ -58,7 +108,7 @@ class CreateSimProduct implements DataPatchInterface
     /**
      * @inheritDoc
      */
-    public static function getDependencies()
+    public static function getDependencies(): array
     {
         return [];
     }
@@ -66,17 +116,30 @@ class CreateSimProduct implements DataPatchInterface
     /**
      * @inheritDoc
      */
-    public function getAliases()
+    public function getAliases(): array
     {
         return [];
     }
 
-    public function apply()
+    /**
+     * Add new product
+     * @return void
+     */
+    public function apply(): void
     {
         $this->appState->emulateAreaCode('adminhtml', [$this, 'execute']);
     }
 
-    public function execute()
+    /**
+     * @return void
+     * @throws \Magento\Framework\Exception\CouldNotSaveException
+     * @throws \Magento\Framework\Exception\InputException
+     * @throws \Magento\Framework\Exception\LocalizedException
+     * @throws \Magento\Framework\Exception\NoSuchEntityException
+     * @throws \Magento\Framework\Exception\StateException
+     * @throws \Magento\Framework\Validation\ValidationException
+     */
+    public function execute(): void
     {
         $product = $this->productInterfaceFactory->create();
         if ($product->getIdBySku('shirt')) {
